@@ -1,37 +1,35 @@
 package com.messaging.server.service;
 
 import com.messaging.server.model.User;
+import com.messaging.server.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
 
-    // Temporarily store registered users in memory
-    private final List<User> users = new ArrayList<>();
+    private final UserRepository userRepository;
+
+    // Constructor Dependency Injection
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     // Register a new user
     public User registerUser(User user) {
-
-        users.add(user);
-
-        return user;
+        user.setId(null);
+        return userRepository.save(user);
     }
 
-    // Retrieve all registered users
+    // Retrieve all users
     public List<User> getAllUsers() {
-
-        return users;
+        return userRepository.findAll();
     }
 
-    // Implement GET User by ID
+    // Retrieve user by ID
     public Optional<User> getUserById(Long id) {
-
-        return users.stream()
-                .filter(user -> user.getId().equals(id))
-                .findFirst();
+        return userRepository.findById(id);
     }
 }
