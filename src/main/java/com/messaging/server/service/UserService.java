@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import com.messaging.server.dto.UserRegistrationRequest;
+import com.messaging.server.exception.DuplicateUserException;
 
 @Service
 public class UserService {
@@ -18,8 +20,23 @@ public class UserService {
     }
 
     // Register a new user
-    public User registerUser(User user) {
-        user.setId(null);
+    public User registerUser(UserRegistrationRequest request) {
+
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new DuplicateUserException("Username already exists");
+        }
+
+        if (userRepository.existsByMobileNumber(request.getMobileNumber())) {
+            throw new DuplicateUserException("Mobile number already registered");
+        }
+
+        User user = new User();
+
+        user.setUsername(request.getUsername());
+        user.setDisplayName(request.getDisplayName());
+        user.setDateOfBirth(request.getDateOfBirth());
+        user.setMobileNumber(request.getMobileNumber());
+
         return userRepository.save(user);
     }
 

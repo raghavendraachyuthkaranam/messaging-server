@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import com.messaging.server.dto.UserRegistrationRequest;
+import org.springframework.http.HttpStatus;
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -22,9 +25,15 @@ public class UserController {
     }
 
     // Register a new user
+
     @PostMapping
-    public User registerUser(@RequestBody User user) {
-        return userService.registerUser(user);
+    public ResponseEntity<User> registerUser(
+            @Valid @RequestBody UserRegistrationRequest request) {
+
+        User savedUser = userService.registerUser(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(savedUser);
     }
 
     // Get all registered users
